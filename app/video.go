@@ -2,14 +2,16 @@ package app
 
 import (
 	"fmt"
+	"image"
 	"os"
 	"path/filepath"
 )
 
 type Video struct {
-	Path string
-	Name string
-	Size int64
+	Path      string
+	Name      string
+	Size      int64
+	Thumbnail image.Image
 }
 
 func NewVideo(path string) (*Video, error) {
@@ -18,11 +20,17 @@ func NewVideo(path string) (*Video, error) {
 		return nil, err
 	}
 
-	return &Video{
+	video := &Video{
 		Path: path,
 		Name: filepath.Base(path),
 		Size: info.Size(),
-	}, nil
+	}
+
+	if thumb, err := ExtractThumbnail(path); err == nil {
+		video.Thumbnail = thumb
+	}
+
+	return video, nil
 }
 
 func (v *Video) SizeString() string {

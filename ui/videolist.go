@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
 	"video-editor/app"
@@ -23,14 +25,28 @@ func NewVideoList(state *app.State) *VideoList {
 	}
 
 	vl.CreateItem = func() fyne.CanvasObject {
-		return widget.NewLabel("placeholder")
+		img := canvas.NewImageFromImage(nil)
+		img.SetMinSize(fyne.NewSize(120, 68))
+		img.FillMode = canvas.ImageFillContain
+
+		label := widget.NewLabel("placeholder")
+
+		return container.NewHBox(img, label)
 	}
 
 	vl.UpdateItem = func(id widget.ListItemID, obj fyne.CanvasObject) {
 		videos := state.GetVideos()
 		if id < len(videos) {
 			video := videos[id]
-			label := obj.(*widget.Label)
+			box := obj.(*fyne.Container)
+			img := box.Objects[0].(*canvas.Image)
+			label := box.Objects[1].(*widget.Label)
+
+			if video.Thumbnail != nil {
+				img.Image = video.Thumbnail
+				img.Refresh()
+			}
+
 			label.SetText(fmt.Sprintf("%d. %s (%s)", id+1, video.Name, video.SizeString()))
 		}
 	}
