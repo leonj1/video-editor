@@ -124,3 +124,25 @@ func (s *State) Count() int {
 
 	return len(s.videos)
 }
+
+func (s *State) Move(from, to int) {
+	s.mu.Lock()
+	if from < 0 || from >= len(s.videos) || to < 0 || to >= len(s.videos) || from == to {
+		s.mu.Unlock()
+		return
+	}
+
+	video := s.videos[from]
+	s.videos = append(s.videos[:from], s.videos[from+1:]...)
+
+	newVideos := make([]*Video, 0, len(s.videos)+1)
+	newVideos = append(newVideos, s.videos[:to]...)
+	newVideos = append(newVideos, video)
+	newVideos = append(newVideos, s.videos[to:]...)
+	s.videos = newVideos
+
+	s.selected = to
+	s.mu.Unlock()
+
+	s.notifyChange()
+}
