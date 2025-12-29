@@ -1,0 +1,17 @@
+# Binary
+video-arranger
+*.exe
+
+# macOS app bundle
+*.app
+
+# Go
+go.sum
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
