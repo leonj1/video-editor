@@ -13,6 +13,7 @@ type ToolbarHandlers struct {
 	OnMoveUp   func()
 	OnMoveDown func()
 	OnClear    func()
+	OnExport   func()
 }
 
 func NewToolbar(handlers ToolbarHandlers) fyne.CanvasObject {
@@ -21,6 +22,7 @@ func NewToolbar(handlers ToolbarHandlers) fyne.CanvasObject {
 	upBtn := widget.NewButtonWithIcon("Move Up", theme.MoveUpIcon(), handlers.OnMoveUp)
 	downBtn := widget.NewButtonWithIcon("Move Down", theme.MoveDownIcon(), handlers.OnMoveDown)
 	clearBtn := widget.NewButtonWithIcon("Clear All", theme.DeleteIcon(), handlers.OnClear)
+	exportBtn := widget.NewButtonWithIcon("Export", theme.DocumentSaveIcon(), handlers.OnExport)
 
 	return container.NewHBox(
 		addBtn,
@@ -30,5 +32,7 @@ func NewToolbar(handlers ToolbarHandlers) fyne.CanvasObject {
 		downBtn,
 		widget.NewSeparator(),
 		clearBtn,
+		widget.NewSeparator(),
+		exportBtn,
 	)
 }

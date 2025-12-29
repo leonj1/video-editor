@@ -22,6 +22,7 @@ func NewMainLayout(state *app.State, handlers *app.Handlers) *MainLayout {
 		OnMoveUp:   handlers.OnMoveUp,
 		OnMoveDown: handlers.OnMoveDown,
 		OnClear:    handlers.OnClear,
+		OnExport:   handlers.OnExport,
 	})
 
 	header := widget.NewLabel("Video Files (drag to reorder)")
