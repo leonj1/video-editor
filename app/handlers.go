@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -81,6 +82,46 @@ func (h *Handlers) OnAddVideos() {
 	log.Println("Showing file dialog...")
 	fd.Show()
 	log.Println("File dialog shown")
+}
+
+func (h *Handlers) OnAddFolder() {
+	log.Println("Opening folder dialog...")
+	fd := dialog.NewFolderOpen(func(uri fyne.ListableURI, err error) {
+		if err != nil {
+			log.Printf("Folder dialog error: %v", err)
+			return
+		}
+		if uri == nil {
+			log.Println("Folder dialog cancelled")
+			return
+		}
+
+		folderPath := uri.Path()
+		log.Printf("Selected folder: %s", folderPath)
+
+		var videoPaths []string
+		err = filepath.WalkDir(folderPath, func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return nil
+			}
+			if !d.IsDir() && isVideoFile(path) {
+				videoPaths = append(videoPaths, path)
+			}
+			return nil
+		})
+		if err != nil {
+			log.Printf("Error walking folder: %v", err)
+			return
+		}
+
+		log.Printf("Found %d video files", len(videoPaths))
+		for _, path := range videoPaths {
+			log.Printf("Adding video: %s", path)
+			h.state.AddVideo(path)
+		}
+	}, h.window)
+
+	fd.Show()
 }
 
 func (h *Handlers) OnRemove() {

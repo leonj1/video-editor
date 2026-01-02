@@ -8,20 +8,22 @@ import (
 )
 
 type ToolbarHandlers struct {
-	OnNew      func()
-	OnAdd      func()
-	OnRemove   func()
-	OnMoveUp   func()
-	OnMoveDown func()
-	OnClear    func()
-	OnExport   func()
-	OnSave     func()
-	OnLoad     func()
+	OnNew       func()
+	OnAdd       func()
+	OnAddFolder func()
+	OnRemove    func()
+	OnMoveUp    func()
+	OnMoveDown  func()
+	OnClear     func()
+	OnExport    func()
+	OnSave      func()
+	OnLoad      func()
 }
 
 func NewToolbar(handlers ToolbarHandlers) fyne.CanvasObject {
 	newBtn := widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), handlers.OnNew)
 	addBtn := widget.NewButtonWithIcon("Add Videos", theme.ContentAddIcon(), handlers.OnAdd)
+	addFolderBtn := widget.NewButtonWithIcon("Add Folder", theme.FolderIcon(), handlers.OnAddFolder)
 	removeBtn := widget.NewButtonWithIcon("Remove", theme.ContentRemoveIcon(), handlers.OnRemove)
 	upBtn := widget.NewButtonWithIcon("Move Up", theme.MoveUpIcon(), handlers.OnMoveUp)
 	downBtn := widget.NewButtonWithIcon("Move Down", theme.MoveDownIcon(), handlers.OnMoveDown)
@@ -34,6 +36,7 @@ func NewToolbar(handlers ToolbarHandlers) fyne.CanvasObject {
 		newBtn,
 		widget.NewSeparator(),
 		addBtn,
+		addFolderBtn,
 		removeBtn,
 		widget.NewSeparator(),
 		upBtn,

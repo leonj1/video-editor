@@ -23,15 +23,16 @@ func NewMainLayout(state *app.State, handlers *app.Handlers) *MainLayout {
 	})
 
 	toolbar := NewToolbar(ToolbarHandlers{
-		OnNew:      handlers.OnNew,
-		OnAdd:      handlers.OnAddVideos,
-		OnRemove:   handlers.OnRemove,
-		OnMoveUp:   handlers.OnMoveUp,
-		OnMoveDown: handlers.OnMoveDown,
-		OnClear:    handlers.OnClear,
-		OnExport:   handlers.OnExport,
-		OnSave:     handlers.OnSave,
-		OnLoad:     handlers.OnLoad,
+		OnNew:       handlers.OnNew,
+		OnAdd:       handlers.OnAddVideos,
+		OnAddFolder: handlers.OnAddFolder,
+		OnRemove:    handlers.OnRemove,
+		OnMoveUp:    handlers.OnMoveUp,
+		OnMoveDown:  handlers.OnMoveDown,
+		OnClear:     handlers.OnClear,
+		OnExport:    handlers.OnExport,
+		OnSave:      handlers.OnSave,
+		OnLoad:      handlers.OnLoad,
 	})
 
 	header := widget.NewLabel("Video Files (drag to reorder)")
