@@ -129,6 +129,10 @@ func (v *Video) DurationString() string {
 	return fmt.Sprintf("%d:%02d", minutes, seconds)
 }
 
+func (v *Video) FolderPath() string {
+	return filepath.Dir(v.Path)
+}
+
 func (v *Video) SizeString() string {
 	const (
 		KB = 1024

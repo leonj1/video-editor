@@ -89,6 +89,38 @@ func (s *State) MoveDown() {
 	s.notifyChange()
 }
 
+func (s *State) MoveToTop() {
+	s.mu.Lock()
+	if s.selected <= 0 || s.selected >= len(s.videos) {
+		s.mu.Unlock()
+		return
+	}
+
+	video := s.videos[s.selected]
+	s.videos = append(s.videos[:s.selected], s.videos[s.selected+1:]...)
+	s.videos = append([]*Video{video}, s.videos...)
+	s.selected = 0
+	s.mu.Unlock()
+
+	s.notifyChange()
+}
+
+func (s *State) MoveToBottom() {
+	s.mu.Lock()
+	if s.selected < 0 || s.selected >= len(s.videos)-1 {
+		s.mu.Unlock()
+		return
+	}
+
+	video := s.videos[s.selected]
+	s.videos = append(s.videos[:s.selected], s.videos[s.selected+1:]...)
+	s.videos = append(s.videos, video)
+	s.selected = len(s.videos) - 1
+	s.mu.Unlock()
+
+	s.notifyChange()
+}
+
 func (s *State) Clear() {
 	s.mu.Lock()
 	s.videos = make([]*Video, 0)
@@ -139,13 +171,19 @@ func (s *State) Move(from, to int) {
 	video := s.videos[from]
 	s.videos = append(s.videos[:from], s.videos[from+1:]...)
 
+	// Adjust target index since we removed an element before it
+	insertAt := to
+	if from < to {
+		insertAt = to - 1
+	}
+
 	newVideos := make([]*Video, 0, len(s.videos)+1)
-	newVideos = append(newVideos, s.videos[:to]...)
+	newVideos = append(newVideos, s.videos[:insertAt]...)
 	newVideos = append(newVideos, video)
-	newVideos = append(newVideos, s.videos[to:]...)
+	newVideos = append(newVideos, s.videos[insertAt:]...)
 	s.videos = newVideos
 
-	s.selected = to
+	s.selected = insertAt
 	s.mu.Unlock()
 
 	s.notifyChange()

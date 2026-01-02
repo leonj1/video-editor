@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
 
-	"video-editor/app"
+	"video-arranger/app"
 )
 
 type VideoList struct {
@@ -25,24 +25,53 @@ type VideoList struct {
 
 type videoItem struct {
 	widget.BaseWidget
-	list       *VideoList
-	index      int
-	background *canvas.Rectangle
-	img        *canvas.Image
-	label      *widget.Label
-	container  *fyne.Container
+	list        *VideoList
+	index       int
+	background  *canvas.Rectangle
+	img         *canvas.Image
+	label       *widget.Label
+	folderLabel *widget.Label
+	moveButtons *fyne.Container
+	container   *fyne.Container
 }
 
 func newVideoItem(list *VideoList) *videoItem {
 	item := &videoItem{
-		list:       list,
-		background: canvas.NewRectangle(color.Transparent),
-		img:        canvas.NewImageFromImage(nil),
-		label:      widget.NewLabel(""),
+		list:        list,
+		background:  canvas.NewRectangle(color.Transparent),
+		img:         canvas.NewImageFromImage(nil),
+		label:       widget.NewLabel(""),
+		folderLabel: widget.NewLabel(""),
 	}
 	item.img.SetMinSize(fyne.NewSize(120, 68))
 	item.img.FillMode = canvas.ImageFillContain
-	item.container = container.NewHBox(item.img, item.label)
+
+	btnTop := widget.NewButton("Top", func() {
+		list.state.MoveToTop()
+	})
+	btnUp := widget.NewButton("Up", func() {
+		list.state.MoveUp()
+	})
+	btnDown := widget.NewButton("Down", func() {
+		list.state.MoveDown()
+	})
+	btnBottom := widget.NewButton("Bottom", func() {
+		list.state.MoveToBottom()
+	})
+
+	item.moveButtons = container.NewHBox(btnTop, btnUp, btnDown, btnBottom)
+	item.moveButtons.Hide()
+
+	// 3-column table: thumbnail | filename | folder | move buttons
+	item.container = container.NewHBox(
+		item.img,
+		widget.NewSeparator(),
+		item.label,
+		widget.NewSeparator(),
+		item.folderLabel,
+		widget.NewSeparator(),
+		item.moveButtons,
+	)
 	item.ExtendBaseWidget(item)
 	return item
 }
@@ -101,22 +130,25 @@ func (v *videoItem) update(index int, video *app.Video) {
 
 	var info string
 	if duration != "" && resolution != "" {
-		info = fmt.Sprintf("%d. %s [%s] %s (%s)", index+1, video.Name, duration, resolution, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n[%s] %s (%s)", index+1, video.Name, duration, resolution, video.SizeString())
 	} else if duration != "" {
-		info = fmt.Sprintf("%d. %s [%s] (%s)", index+1, video.Name, duration, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n[%s] (%s)", index+1, video.Name, duration, video.SizeString())
 	} else if resolution != "" {
-		info = fmt.Sprintf("%d. %s %s (%s)", index+1, video.Name, resolution, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n%s (%s)", index+1, video.Name, resolution, video.SizeString())
 	} else {
-		info = fmt.Sprintf("%d. %s (%s)", index+1, video.Name, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n(%s)", index+1, video.Name, video.SizeString())
 	}
 	v.label.SetText(info)
+	v.folderLabel.SetText(video.FolderPath())
 }
 
 func (v *videoItem) setSelected(selected bool) {
 	if selected {
 		v.background.FillColor = color.NRGBA{R: 100, G: 149, B: 237, A: 100}
+		v.moveButtons.Show()
 	} else {
 		v.background.FillColor = color.Transparent
+		v.moveButtons.Hide()
 	}
 	v.background.Refresh()
 }

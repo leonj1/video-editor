@@ -8,7 +8,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 
-	"video-editor/app"
+	"video-arranger/app"
 )
 
 type ExportDialog struct {

@@ -9,8 +9,8 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/driver/desktop"
 
-	appPkg "video-editor/app"
-	"video-editor/ui"
+	appPkg "video-arranger/app"
+	"video-arranger/ui"
 )
 
 var videoExtensions = map[string]bool{

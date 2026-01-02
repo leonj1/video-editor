@@ -1,4 +1,4 @@
-module video-editor
+module video-arranger
 
 go 1.25.5
 

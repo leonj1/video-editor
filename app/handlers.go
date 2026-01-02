@@ -208,6 +208,10 @@ func (h *Handlers) showFileSaveDialog(options ExportOptions) {
 		outputPath := writer.URI().Path()
 		writer.Close()
 
+		// Remove the empty file created by Fyne's file save dialog
+		// so ffmpeg can write to it without issues
+		os.Remove(outputPath)
+
 		videos := h.state.GetVideos()
 		progress := make(chan ExportProgress)
 

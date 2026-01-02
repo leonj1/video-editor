@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
-	"video-editor/app"
+	"video-arranger/app"
 )
 
 type PreviewPane struct {
