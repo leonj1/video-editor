@@ -13,6 +13,31 @@ import (
 	"video-arranger/app"
 )
 
+const (
+	maxFileNameLength   = 40
+	maxFolderPathLength = 50
+)
+
+func truncateString(s string, maxLen int) string {
+	if len(s) <= maxLen {
+		return s
+	}
+	if maxLen <= 3 {
+		return s[:maxLen]
+	}
+	return s[:maxLen-3] + "..."
+}
+
+func truncatePathLeft(s string, maxLen int) string {
+	if len(s) <= maxLen {
+		return s
+	}
+	if maxLen <= 3 {
+		return s[len(s)-maxLen:]
+	}
+	return "..." + s[len(s)-maxLen+3:]
+}
+
 type VideoList struct {
 	widget.BaseWidget
 	state       *app.State
@@ -127,19 +152,20 @@ func (v *videoItem) update(index int, video *app.Video) {
 
 	duration := video.DurationString()
 	resolution := video.ResolutionString()
+	truncatedName := truncateString(video.Name, maxFileNameLength)
 
 	var info string
 	if duration != "" && resolution != "" {
-		info = fmt.Sprintf("%d. %s\n[%s] %s (%s)", index+1, video.Name, duration, resolution, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n[%s] %s (%s)", index+1, truncatedName, duration, resolution, video.SizeString())
 	} else if duration != "" {
-		info = fmt.Sprintf("%d. %s\n[%s] (%s)", index+1, video.Name, duration, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n[%s] (%s)", index+1, truncatedName, duration, video.SizeString())
 	} else if resolution != "" {
-		info = fmt.Sprintf("%d. %s\n%s (%s)", index+1, video.Name, resolution, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n%s (%s)", index+1, truncatedName, resolution, video.SizeString())
 	} else {
-		info = fmt.Sprintf("%d. %s\n(%s)", index+1, video.Name, video.SizeString())
+		info = fmt.Sprintf("%d. %s\n(%s)", index+1, truncatedName, video.SizeString())
 	}
 	v.label.SetText(info)
-	v.folderLabel.SetText(video.FolderPath())
+	v.folderLabel.SetText(truncatePathLeft(video.FolderPath(), maxFolderPathLength))
 }
 
 func (v *videoItem) setSelected(selected bool) {
